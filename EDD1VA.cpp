@@ -191,15 +191,31 @@ listaAluno* insereAluno(listaAluno *l){
 	return l;
 }
 
-
-
-
-
-void imprimeAluno (listaAluno* l)
-{
- listaAluno* p;
+imprimirAluno(aluno aluno){
  listaTelefone* t;
  listaDisciplina* d;
+printf("**********     Dados do Aluno    *******\n");
+ 	printf("Matricula: %d", aluno.matricula); 
+ 	printf("\nNome: %s", aluno.nome); 
+ 	
+ 	for (t = aluno.telefone; t!= NULL; t = t->prox){		
+ 	printf("\nTelefone: %d", t->telefone);
+ 	}
+ 	
+	printf("\nEmail: %s", aluno.email);  
+	printf("\nCurso: %s", aluno.curso);
+	
+	for (d = aluno.disciplina; d!= NULL; d = d->prox){		
+ 	printf("\nDisciplina: %s", d->disciplina);
+ 	}
+ 	printf("\n****************************************\n");
+}
+
+
+
+void imprimeAlunos (listaAluno* l)
+{
+ listaAluno* p;
  limparTela();
  	printf("****************************************\n");
 	printf("***          Lista de Alunos         ***\n");
@@ -212,21 +228,7 @@ void imprimeAluno (listaAluno* l)
 	else{
 	
  for (p = l; p!= NULL; p = p->prox){
- 	printf("**********     Dados do Aluno    *******\n");
- 	printf("Matricula: %d", p->conteudo.matricula); 
- 	printf("\nNome: %s", p->conteudo.nome); 
- 	
- 	for (t = p->conteudo.telefone; t!= NULL; t = t->prox){		
- 	printf("\nTelefone: %d", t->telefone);
- 	}
- 	
-	printf("\nEmail: %s", p->conteudo.email);  
-	printf("\nCurso: %s", p->conteudo.curso);
-	
-	for (d = p->conteudo.disciplina; d!= NULL; d = d->prox){		
- 	printf("\nDisciplina: %s", d->disciplina);
- 	}
- 	printf("\n****************************************\n");
+ imprimirAluno(p->conteudo);
 }
 
 }
@@ -235,6 +237,35 @@ void imprimeAluno (listaAluno* l)
  system("pause");
 }
 
+
+listaAluno* buscar(listaAluno* l){
+	int opcao;
+	limparTela();
+ 	printf("*****************************************\n");
+	printf("Escolha por qual Informacao deseja Buscar\n");
+	printf("*****************************************\n");
+	printf("* [1] - MATRICULA		        *\n");
+	printf("* [2] - NOME			        *\n");
+	printf("* [3] - DISCIPLINA	   	        *\n");
+	printf("* [0] - SAIR		 		*\n");
+	printf ("Digite uma das Opcoes: ");
+  scanf("%d", &opcao);
+  
+  switch (opcao)
+	{
+	
+	case 1:
+   	break;
+
+   	case 2:
+   	break;
+   	
+   	case 3:
+   	break;
+
+   default:;
+	}
+}
 
  int main() {
  	listaAluno* l = inicializaAluno();
@@ -248,7 +279,8 @@ limparTela();
 	printf("***                MENU              ***\n");
 	printf("****************************************\n");
 	printf("* [1] - INSERIR		               *\n");
-	printf("* [2] - LISTAR		               *\n");
+	printf("* [2] - LISTAR TODOS      	       *\n");
+	printf("* [3] - BUSCAR               	       *\n");
 	printf("* [0] - SAIR		               *\n");
 	printf("****************************************\n");
   
@@ -264,7 +296,11 @@ limparTela();
    	break;
 
    	case 2:
-   		imprimeAluno(l);
+   		imprimeAlunos(l);
+   	break;
+   	
+   	case 3:
+   		l = buscar(l);
    	break;
 
    default:
