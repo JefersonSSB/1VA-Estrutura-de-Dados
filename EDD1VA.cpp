@@ -11,14 +11,25 @@ void limparBuffer()
 setbuf(stdin, NULL);
 }
 
+
+typedef struct listaTelefone {
+      int telefone; 
+      struct listaTelefone *prox;
+};
+
+typedef struct listaDisciplina {
+      char disciplina[30]; 
+      struct listaDisciplina *prox;
+};
+
 typedef struct aluno 
 {
     int matricula;
     char nome[30];
-    int telefone;
+    listaTelefone* telefone;
     char email[30];
     char curso[30];
-    char disciplina[30];
+    listaDisciplina* disciplina;
 };
 
 
@@ -27,17 +38,26 @@ typedef struct listaAluno  {
       struct listaAluno *prox;
 };
 
+listaTelefone* inicializaTelefone()
+{
+ return NULL;
+}
+
+listaDisciplina* inicializaDisciplina()
+{
+ return NULL;
+}
 listaAluno* inicializaAluno()
 {
  return NULL;
 }
 
 
-int perguntaInserir(){
+int perguntaInserir(char tipo[20] ){
 	int resposta;
-	printf("\n*****  DESEJA INSERIR MAIS ? ******\n");
-	printf("* [1] - SIM                         *\n");
-	printf("* [0] - NAO                         *\n");
+	printf("\n*****  DESEJA INSERIR MAIS %s ? ******\n",tipo);
+	printf("* [1] - SIM                      *\n");
+	printf("* [0] - NAO                      *\n");
 	scanf("%d",&resposta);
 	limparBuffer();
 	 return resposta;
@@ -52,9 +72,81 @@ listaAluno* insere(listaAluno* l, aluno conteudo)
 		return novoElemento;	
 }
 
+listaTelefone* insereT(listaTelefone* l, int telefone)
+{
+		listaTelefone* novoElemento = (listaTelefone*)malloc(sizeof(listaTelefone));
+		novoElemento->telefone = telefone;
+		novoElemento->prox = l;
+
+		return novoElemento;	
+}
+
+listaDisciplina* insereD(listaDisciplina* l, char disciplina[])
+{
+		listaDisciplina* novoElemento = (listaDisciplina*)malloc(sizeof(listaDisciplina));
+		
+	int i;
+    for (i=0; i<30; i++) {
+        novoElemento->disciplina[i] = disciplina[i];
+    }
+    novoElemento->disciplina[30] = '\0';
+    novoElemento->prox = l;
+		
+		
+		return novoElemento;
+		
+}
+
+
+
+int preencherTelefone (){
+	int novoTelefone;	
+	printf("\nTelefone: ");
+	scanf("%d",&novoTelefone);
+	limparBuffer();
+	
+	return novoTelefone;
+}
+
+listaTelefone* insereTelefone(listaTelefone *l){
+	
+	int i = 1;
+		
+	while (i==1){
+		int novoTelefone = preencherTelefone();
+		l = insereT(l,novoTelefone);
+		i = perguntaInserir("TELEFONES");
+	}
+	
+	
+	return l;
+}
+
+listaDisciplina* insereDisciplina(listaDisciplina *l){
+	
+	int i = 1;
+		
+	while (i==1){
+		
+		char novaDisciplina[30];
+		printf("\nDisciplina: ");
+		scanf("%[^\n]",&novaDisciplina);
+		limparBuffer();
+		
+		l = insereD(l,novaDisciplina);
+		i = perguntaInserir("DISCIPLINAS");
+	}
+	
+	
+	return l;
+}
+
 
 aluno preecheAluno(){
 	
+	
+	listaTelefone* t = inicializaTelefone();
+	listaDisciplina* d = inicializaDisciplina();
 	aluno novoAluno;	
 	limparTela();
 	printf("****************************************\n");
@@ -68,8 +160,7 @@ aluno preecheAluno(){
 	printf("\nNome: ");
 	scanf("%[^\n]",&novoAluno.nome);
 	limparBuffer();
-	printf("\nTelefone: ");
-	scanf("%d",&novoAluno.telefone);
+	novoAluno.telefone = insereTelefone(t);
 	limparBuffer();
 	printf("\nEmail: ");
 	scanf("%[^\n]",&novoAluno.email);
@@ -77,20 +168,23 @@ aluno preecheAluno(){
 	printf("\nCurso: ");
 	scanf("%[^\n]",&novoAluno.curso);
 	limparBuffer();
-	printf("\nDisciplica: ");
-	scanf("%[^\n]",&novoAluno.disciplina);
+	novoAluno.disciplina = insereDisciplina(d);
 	limparBuffer();
 	
 	return novoAluno;
 	
 }
+
+
+
 listaAluno* insereAluno(listaAluno *l){
 	
-	int i = 1;	
+	int i = 1;
+		
 	while (i==1){
 		aluno novoAluno = preecheAluno();
 		l = insere(l,novoAluno);
-		i = perguntaInserir();
+		i = perguntaInserir("ALUNOS");
 	}
 	
 	
@@ -98,9 +192,14 @@ listaAluno* insereAluno(listaAluno *l){
 }
 
 
+
+
+
 void imprimeAluno (listaAluno* l)
 {
  listaAluno* p;
+ listaTelefone* t;
+ listaDisciplina* d;
  limparTela();
  	printf("****************************************\n");
 	printf("***          Lista de Alunos         ***\n");
@@ -113,13 +212,20 @@ void imprimeAluno (listaAluno* l)
 	else{
 	
  for (p = l; p!= NULL; p = p->prox){
- 	printf("****************************************\n");
+ 	printf("**********     Dados do Aluno    *******\n");
  	printf("Matricula: %d", p->conteudo.matricula); 
  	printf("\nNome: %s", p->conteudo.nome); 
- 	printf("\nTelefone: %d", p->conteudo.telefone);
+ 	
+ 	for (t = p->conteudo.telefone; t!= NULL; t = t->prox){		
+ 	printf("\nTelefone: %d", t->telefone);
+ 	}
+ 	
 	printf("\nEmail: %s", p->conteudo.email);  
 	printf("\nCurso: %s", p->conteudo.curso);
-	printf("\nDisciplina: %s", p->conteudo.disciplina);
+	
+	for (d = p->conteudo.disciplina; d!= NULL; d = d->prox){		
+ 	printf("\nDisciplina: %s", d->disciplina);
+ 	}
  	printf("\n****************************************\n");
 }
 
