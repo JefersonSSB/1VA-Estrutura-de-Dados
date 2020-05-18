@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include <string.h> 
 
 void limparTela()
 {
@@ -15,6 +16,7 @@ setbuf(stdin, NULL);
 typedef struct listaTelefone {
       int telefone; 
       struct listaTelefone *prox;
+
 };
 
 typedef struct listaDisciplina {
@@ -71,6 +73,47 @@ listaAluno* insere(listaAluno* l, aluno conteudo)
 
 		return novoElemento;	
 }
+
+listaAluno* buscaNome (char nome[30], listaAluno* l)
+{
+   listaAluno *p;
+   p = l;
+   while (p != NULL && strcmp(p->conteudo.nome, nome) != 0) {
+   
+      p = p->prox; }
+   return p;
+}
+
+listaAluno* buscaMatricula (int matricula, listaAluno* l)
+{
+   listaAluno *p;
+   p = l;
+   while (p != NULL && p->conteudo.matricula != matricula) {
+   
+      p = p->prox; }
+   return p;	
+}
+
+listaAluno* buscaRemove (char nome[30], listaAluno *l)
+{
+   listaAluno *p, *q;
+   p = l;
+   q = l->prox;
+   while (q != NULL && strcmp(q->conteudo.nome, nome) != 0) {
+      p = q;
+      q = q->prox;
+   }
+   if (q != NULL) {
+      p->prox = q->prox;
+      free (q);
+   }
+   return p;
+}
+
+
+
+
+
 
 listaTelefone* insereT(listaTelefone* l, int telefone)
 {
@@ -230,45 +273,149 @@ void imprimeAlunos (listaAluno* l)
  for (p = l; p!= NULL; p = p->prox){
  imprimirAluno(p->conteudo);
 }
-
 }
  
  
  system("pause");
 }
 
+listaAluno* buscaInsere (aluno x, aluno y, listaAluno *le)
+{
+	
+ listaAluno *p;
+   p = le;
+   while (p != NULL && strcmp(p->conteudo.nome, y.nome) != 0) {
+      p = p->prox; }
+      
+      p->conteudo = x;
+   return le;
+}
+
+
+void buscaCurso (char curso[30],listaAluno* l)
+{
+ listaAluno* p;
+ limparTela();
+ 	printf("****************************************\n");
+	printf("***          Lista de Alunos         ***\n");
+	printf("****************************************\n");
+	
+	
+	if (l == NULL){
+		printf("\n******      Lista Vazia     ******\n");
+	}
+	else{
+	
+ for (p = l; p!= NULL; p = p->prox){
+ 	if(strcmp(p->conteudo.curso, curso) == 0){
+ imprimirAluno(p->conteudo);
+}
+}
+}
+ 
+ 
+ system("pause");
+}
+
+int pergunta2(){
+	
+	int opcao;
+	printf("* [1] - EDITAR		        *\n");
+	printf("* [2] - EXCLUIR			        *\n");
+	printf("* [0] - SAIR		 		*\n");
+	scanf("%d", &opcao);
+  	limparBuffer();
+  
+  return opcao;
+}
+
 
 listaAluno* buscar(listaAluno* l){
 	int opcao;
+	aluno novoAluno;
+	listaAluno* le;
 	limparTela();
  	printf("*****************************************\n");
 	printf("Escolha por qual Informacao deseja Buscar\n");
 	printf("*****************************************\n");
 	printf("* [1] - MATRICULA		        *\n");
 	printf("* [2] - NOME			        *\n");
-	printf("* [3] - DISCIPLINA	   	        *\n");
 	printf("* [0] - SAIR		 		*\n");
 	printf ("Digite uma das Opcoes: ");
   scanf("%d", &opcao);
-  
+  limparBuffer();
   switch (opcao)
 	{
 	
 	case 1:
+		printf("**** Insira a Matricula do Aluno ********\n");
+   		printf("\nMatricula: ");
+		scanf("%d",&novoAluno.matricula);
+		limparBuffer();
+		le = NULL;
+		le = buscaMatricula(novoAluno.matricula,l);
+
+
+		if (le==NULL){
+			printf("\nMatricula nao encontrado\n");
+			 system("pause");
+		}
+		else{
+			
+			imprimirAluno(le->conteudo);
+			int y = pergunta2();
+			if(y==1){
+				aluno novoAluno = preecheAluno();
+				l = buscaInsere(novoAluno,le->conteudo,l);
+				printf("\nAlterado\n");
+				system("pause");
+			}
+			if(y==2){
+			l = buscaRemove(le->conteudo.nome,l);
+			printf("\nRemovido\n");
+			system("pause");
+			}
+		}
    	break;
 
    	case 2:
+   		printf("**** Insira o Nome do Aluno ********\n");
+   		printf("\nNome: ");
+		scanf("%[^\n]",&novoAluno.nome);
+		limparBuffer();
+		le = NULL;
+		le = buscaNome(novoAluno.nome,l);
+		if (le==NULL){
+			printf("\nNome nao encontrado\n");
+			system("pause");
+		}
+		else{
+			
+			imprimirAluno(le->conteudo);
+			int y = pergunta2();
+			if(y==1){
+				aluno novoAluno = preecheAluno();
+				l = buscaInsere(novoAluno,le->conteudo,l);
+				printf("\nAlterado\n");
+				system("pause");
+				
+			}
+			if(y==2){
+			l = buscaRemove(le->conteudo.nome,l);
+			printf("\nRemovido\n");
+			system("pause");
+			}
+		}
    	break;
-   	
-   	case 3:
-   	break;
-
    default:;
 	}
+	
+	return l;
 }
 
  int main() {
  	listaAluno* l = inicializaAluno();
+ 	aluno novoAluno;
 	int opcao;
 		
 while(1){
@@ -280,7 +427,8 @@ limparTela();
 	printf("****************************************\n");
 	printf("* [1] - INSERIR		               *\n");
 	printf("* [2] - LISTAR TODOS      	       *\n");
-	printf("* [3] - BUSCAR               	       *\n");
+	printf("* [3] - BUSCAR (EDITAR/EXCLUIR)        *\n");
+	printf("* [4] - BUSCA POR CURSO	     	       *\n");
 	printf("* [0] - SAIR		               *\n");
 	printf("****************************************\n");
   
@@ -301,6 +449,13 @@ limparTela();
    	
    	case 3:
    		l = buscar(l);
+   	break;
+   	
+   		case 4:
+   		printf("**** Insira o Curso ********\n");
+   		printf("\nCurso: ");
+		scanf("%[^\n]",&novoAluno.curso);
+   		buscaCurso(novoAluno.curso,l);
    	break;
 
    default:
